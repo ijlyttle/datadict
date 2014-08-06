@@ -31,8 +31,8 @@ make_dict_entries <- function(data, name_col, ...){
   vec <- data[[name_col]]
   
   data.frame(
-    name_col = rep(name_col, length(manual_entries) + 2),
     num_col = rep(num_col, length(manual_entries) + 2),
+    name_col = rep(name_col, length(manual_entries) + 2),
     attribute = c("class", "md5_hash", names(manual_entries)),
     value = c(
       class(vec)[[1]],
