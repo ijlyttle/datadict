@@ -19,6 +19,10 @@ opts_chunk$set(fig.width = 3.5, fig.height = 2.5, dpi = 100)
 ```
 
 ```{r}
+library(dplyr)
+```
+
+```{r}
 iris_dict <- data.frame() %>%
   add_dict_entries(iris, "Sepal.Length", 
     units = "cm", name_long = "sepal length", description = "length of the sepal") %>%
