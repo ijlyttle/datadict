@@ -19,7 +19,7 @@ opts_chunk$set(fig.width = 3.5, fig.height = 2.5, dpi = 100)
 ```
 
 ```{r}
-library(dplyr)
+library(dplyr) 
 ```
 
 ```{r}
