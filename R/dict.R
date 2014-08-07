@@ -68,6 +68,15 @@ add_dict_entries <- function(dict, data, name_col, ...){
   dict
 }
 
+#' trim_dict_entries
+#'
+#' Trim the entries in a dictionary according to which columns are still in a
+#' data-frame. Could be useful after a select.
+#' 
+trim_dict_entries <- function(dict, data){
+  dict <- dict %>%
+    filter(name_col %in% colnames(data))
+} 
 
 #' get_dict_wide 
 #' 
