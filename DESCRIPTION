@@ -10,7 +10,8 @@ Depends:
     R (>= 3.0)
 Imports:
     dplyr,
-    tidyr
+    tidyr,
+    assertthat
 Suggests:
     testthat (>= 0.8.1),
     knitr (>= 1.6),

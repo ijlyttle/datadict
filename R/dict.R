@@ -1,88 +1,85 @@
 library(dplyr)
 library(tidyr)
+library(assertthat)
 library(digest)
 
-#' make_dict_entries
+#' make_entries_data
 #' 
-#' generate dictionary entries 
-#' 
-#' returns a data-frame with n + 2 observations of three variables: name_col, attribute, value,  
-#' where n is the number of additional arguments
+#' sample text
 #'
 #' @param data        data.frame to be described
-#' @param name_col    string, column name  
-#' @param ...         additional entries, i.e. key = "value"
 #'
 #' @return data.frame
-#' @import digest
 #' @export
-#'  
-make_dict_entries <- function(data, name_col, ...){
+#' @import dplyr
+#' @import digest
+#' @import assertthat
+#' @import tidyr
+make_entries_data <- function(data){
   
-  manual_entries <- list(...)
-  
-  # validate name_col
-  if (!(name_col %in% colnames(data)))
-    stop(paste0(name_col, "is not a column in", data, collapse = " "))
+  # assert that data is a data.frame
+  assert_that(is.data.frame(data))
 
-  # num_col 
-  num_col <- which(colnames(data) == name_col)
-  
-  vec <- data[[name_col]]
-  
-  data.frame(
-    num_col = rep(num_col, length(manual_entries) + 2),
-    name_col = rep(name_col, length(manual_entries) + 2),
-    attribute = c("class", "md5_hash", names(manual_entries)),
-    value = c(
-      class(vec)[[1]],
-      digest::digest(vec, algo = "md5"),
-      as.character(manual_entries)
-    ),
-    stringsAsFactors = FALSE
-  )
+  dict <- 
+    data.frame(
+      name_col = colnames(data),
+      num_col = seq(1, ncol(data)),
+      class = vapply(data, class, ""),
+      md5_hash = vapply(data, digest::digest, "", algo = "md5"),
+      stringsAsFactors = FALSE
+    )
+ 
+  dict
   
 }
 
-#' add_dict_entries
+#' make_entries_dict
 #' 
-#' generate dictionary entries 
-#' 
-#' returns a data-frame with n + 2 observations of three variables: name, attribute, value,  
-#' where n is the number of additional arguments
+#' sample_text
 #'
-#' @param dict        data.frame to be added-to
-#' @param data        data.frame to be described
-#' @param name_col    string, column name  
-#' @param ...         additional entries, i.e. key = "value"
+#' @param dict   data.frame with dictionary entries, must have column name_col
+#' @param data   data.frame to be described
 #'
 #' @return data.frame
 #' @export
-#' 
-add_dict_entries <- function(dict, data, name_col, ...){
+make_entries_dict <- function(dict, data){
   
-  # bind in new entries
-  dict <- dict %>%
-    rbind(make_dict_entries(data, name_col, ...))
-    
+  # assert that data, dict are data.frames, df has a column "name_col"
+  assert_that(is.data.frame(data))
+  assert_that(is.data.frame(dict))
+  assert_that(has_name(dict, "name_col"))
+  
+  name_col_data <- colnames(data)
+  name_col_df <- dict$name_col
+  
+  name_col_df_good <- name_col_df[(name_col_df %in% name_col_data)]
+  name_col_df_bad <- name_col_df[!(name_col_df %in% name_col_data)]
+  
+  if (length(name_col_df_bad) > 0){
+    warning("droppping dictionary entries not in data: ", name_col_df_bad)
+  }
+  
+  # select only good colunms
+  dict <- dict %>% filter(name_col %in% name_col_df_good)
+  
   dict
 }
 
-#' trim_dict_entries
+#' trim_entries
 #'
 #' Trim the entries in a dictionary according to which columns are still in a
 #' data-frame. Could be useful after a select.
 #' 
-trim_dict_entries <- function(dict, data){
+trim_entries <- function(dict, data){
   dict <- dict %>%
     filter(name_col %in% colnames(data))
 } 
 
-#' get_dict_wide 
+#' get_entries 
 #' 
 #' print out a dictionary
 #' 
-#' @param dict
+#' @param dict data.frame, dictionary 
 #' @param by_num logical (default TRUE)
 #' @param print_hash logical (default TRUE)
 #' 
@@ -90,21 +87,19 @@ trim_dict_entries <- function(dict, data){
 #' @import dplyr
 #' @import tidyr
 #' @export
-get_dict_wide <- function(dict, by_num = TRUE, print_hash = TRUE){
+get_entries <- function(dict, by_num = TRUE, print_hash = TRUE){
   
-  dict_wide <- dict %>% spread(attribute, value)
-    
   if (by_num) {
-    dict_wide <- dict_wide %>% arrange(num_col)
+    dict <- dict %>% arrange(num_col)
   } else {
-    dict_wide <- dict_wide %>% arrange(name_col)
+    dict <- dict %>% arrange(name_col)
   }
   
   if (!print_hash){
-    dict_wide <- dict_wide %>% select(-md5_hash)
+    dict <- dict %>% select(-md5_hash)
   }
   
-  dict_wide
+  dict
 }
   
   
