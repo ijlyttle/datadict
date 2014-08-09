@@ -32,7 +32,8 @@ csv <-
 "Species", "", "species", "species of the flower"'
 
 iris_dict_csv <- 
-  csv %>% textConnection() %>% read.csv() %>% 
+  csv %>% textConnection() %>% 
+    read.csv(stringsAsFactors = FALSE, strip.white = TRUE) %>% 
   make_entries_dict(iris)
 
 iris_dict_data <- make_entries_data(iris)
