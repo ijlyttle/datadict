@@ -23,15 +23,19 @@ library(dplyr)
 ```
 
 ```{r}
-iris_dict <- data.frame() %>%
-  add_dict_entries(iris, "Sepal.Length", 
-    units = "cm", name_long = "sepal length", description = "length of the sepal") %>%
-  add_dict_entries(iris, "Sepal.Width", 
-    units = "cm", name_long = "sepal width", description = "width of the sepal") %>%
-  add_dict_entries(iris, "Petal.Length", 
-    units = "cm", name_long = "petal length", description = "length of the petal") %>%
-  add_dict_entries(iris, "Petal.Width", 
-    units = "cm", name_long = "petal width", description = "width of the petal") %>%
-  add_dict_entries(iris, "Species",
-    units = NA, name_long = "species", description = "species of the flower") 
+csv <- 
+'"name_col", "units", "name_long", "description"
+"Sepal.Length", "cm", "sepal length", "length of the sepal"
+"Sepal.Width", "cm", "sepal width", "width of the sepal"
+"Petal.Length", "cm", "petal length", "length of the petal"
+"Petal.Width", "cm", "petal width", "width of the petal"
+"Species", "", "species", "species of the flower"'
+
+iris_dict_csv <- 
+  csv %>% textConnection() %>% read.csv() %>% 
+  make_entries_dict(iris)
+
+iris_dict_data <- make_entries_data(iris)
+
+iris_dict <- left_join(iris_dict_data, iris_dict_csv, by = "name_col")
 ```
