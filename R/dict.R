@@ -24,7 +24,7 @@ make_entries_data <- function(data){
     data.frame(
       name_col = colnames(data),
       num_col = seq(1, ncol(data)),
-      class = vapply(data, class, ""),
+      class = vapply(data, function(x) class(x)[[1]], ""),
       md5_hash = vapply(data, digest::digest, "", algo = "md5"),
       stringsAsFactors = FALSE
     )
