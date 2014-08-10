@@ -3,14 +3,14 @@
 \alias{get_entries}
 \title{get_entries}
 \usage{
-get_entries(dict, by_num = TRUE, print_hash = TRUE)
+get_entries(dict, by_num = TRUE, vars = NULL)
 }
 \arguments{
 \item{dict}{data.frame, dictionary}
 
 \item{by_num}{logical (default TRUE)}
 
-\item{print_hash}{logical (default TRUE)}
+\item{vars}{character vector of columns to select}
 }
 \value{
 data.frame

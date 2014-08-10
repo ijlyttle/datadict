@@ -79,15 +79,17 @@ trim_entries <- function(dict, data){
 #' 
 #' print out a dictionary
 #' 
-#' @param dict data.frame, dictionary 
-#' @param by_num logical (default TRUE)
-#' @param print_hash logical (default TRUE)
+#' @param dict     data.frame, dictionary 
+#' @param by_num   logical (default TRUE)
+#' @param vars     character vector of columns to select
 #' 
 #' @return data.frame
 #' @import dplyr
 #' @import tidyr
 #' @export
-get_entries <- function(dict, by_num = TRUE, print_hash = TRUE){
+get_entries <- function(dict, by_num = TRUE, vars = NULL){
+  
+  # may wish to ensure that vars are a part of dict
   
   if (by_num) {
     dict <- dict %>% arrange(num_col)
@@ -95,8 +97,9 @@ get_entries <- function(dict, by_num = TRUE, print_hash = TRUE){
     dict <- dict %>% arrange(name_col)
   }
   
-  if (!print_hash){
-    dict <- dict %>% select(-md5_hash)
+  # columns to select
+  if (!is.null(vars)){
+    dict <- dict[, vars, drop = FALSE]
   }
   
   dict
