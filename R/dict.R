@@ -105,10 +105,10 @@ get_entries <- function(dict, by_num = TRUE, vars = NULL){
   dict
 }
   
+#' get_entries_nondata
+#'  
+get_entries_nondata <- function(dict){
+  dict <- dict %>% select(-c(num_col, class, md5_hash))
   
-
-#' dict_validate
-#'
-
-#' dict_update_hash
-#' 
+  dict
+}
